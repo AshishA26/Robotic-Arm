@@ -3,7 +3,7 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-RF24 radio(32, 33);   // nRF24L01 (CE, CSN), can be any digital pin on the arduino
+RF24 radio(7, 8);   // nRF24L01 (CE, CSN), can be any digital pin on the arduino
 
 // called this way, it uses the default address 0x40
 // pwm is adafruits library meant to mimic things like servo.writeMicroseconds in order for them to use it on the dedicated servo driver
@@ -46,6 +46,7 @@ void resetData() {
 
 void setup() {
   Serial.begin(9600);
+  Serial.println("Beginning...");
 
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
@@ -66,21 +67,39 @@ void loop() {
   if (radio.available()) {
     radio.read(&data, sizeof(Data_Package)); // Read the whole data and store it into the 'data' structure
     lastReceiveTime = millis(); // At this moment we have received the data
+    Serial.println("Available");
+    Serial.print("MPU0_y: ");
+    Serial.print(data.MPU0_y);
+    Serial.print("; MPU0_p: ");
+    Serial.print(data.MPU0_p);
+    Serial.print("; MPU0_r: ");
+    Serial.println(data.MPU0_r);
+    Serial.print("; MPU1_y: ");
+    Serial.println(data.MPU1_y);
+    Serial.print("; MPU1_p: ");
+    Serial.print(data.MPU1_p);
+    Serial.print("; MPU1_r: ");
+    Serial.print(data.MPU1_r);
+    Serial.println("");
 
-    servoMap[0] = map(data.MPU0_y, 180, 0, SERVOMIN, SERVOMAX);
-    pwm.writeMicroseconds(servo[0], servoMap[0]);
-    servoMap[1] = map(data.MPU0_p, 180, 0, SERVOMIN, SERVOMAX);
-    pwm.writeMicroseconds(servo[1], servoMap[1]);
-    servoMap[2] = map(data.MPU0_r, 180, 0, SERVOMIN, SERVOMAX);
-    pwm.writeMicroseconds(servo[2], servoMap[2]);
-
-    servoMap[3] = map(data.MPU1_y, 180, 0, SERVOMIN, SERVOMAX);
-    pwm.writeMicroseconds(servo[3], servoMap[3]);
-    servoMap[4] = map(data.MPU1_p, 180, 0, SERVOMIN, SERVOMAX);
-    pwm.writeMicroseconds(servo[4], servoMap[4]);
-    servoMap[5] = map(data.MPU1_r, 180, 0, SERVOMIN, SERVOMAX);
-    pwm.writeMicroseconds(servo[5], servoMap[5]);
+    //    servoMap[0] = map(data.MPU0_y, 180, 0, SERVOMIN, SERVOMAX);
+    //    pwm.writeMicroseconds(servo[0], servoMap[0]);
+    //    servoMap[1] = map(data.MPU0_p, 180, 0, SERVOMIN, SERVOMAX);
+    //    pwm.writeMicroseconds(servo[1], servoMap[1]);
+    //    servoMap[2] = map(data.MPU0_r, 180, 0, SERVOMIN, SERVOMAX);
+    //    pwm.writeMicroseconds(servo[2], servoMap[2]);
+    //
+    //    servoMap[3] = map(data.MPU1_y, 180, 0, SERVOMIN, SERVOMAX);
+    //    pwm.writeMicroseconds(servo[3], servoMap[3]);
+    //    servoMap[4] = map(data.MPU1_p, 180, 0, SERVOMIN, SERVOMAX);
+    //    pwm.writeMicroseconds(servo[4], servoMap[4]);
+    //    servoMap[5] = map(data.MPU1_r, 180, 0, SERVOMIN, SERVOMAX);
+    //    pwm.writeMicroseconds(servo[5], servoMap[5]);
   }
+  else {
+    Serial.println("Not available");
+  }
+
   // Check whether we keep receving data, or we have a connection between the two modules
   currentTime = millis();
   if ( currentTime - lastReceiveTime > 1000 ) { // If current time is more then 1 second since we have recived the last data, that means we have lost connection

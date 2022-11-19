@@ -33,7 +33,7 @@ float MPU_y[] = {0, 0};
 float MPU_p[] = {0, 0};
 float MPU_r[] = {0, 0};
 
-RF24 radio(7, 8);   // nRF24L01 (CE, CSN)
+RF24 radio(32, 33);   // nRF24L01 (CE, CSN)
 const byte address[6] = "00001"; // Address
 
 // Max size of this struct is 32 bytes - NRF24L01 buffer limit
