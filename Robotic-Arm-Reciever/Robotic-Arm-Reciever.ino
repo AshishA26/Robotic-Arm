@@ -1,3 +1,4 @@
+
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <SPI.h>
@@ -16,6 +17,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 // our servo # counter
 uint8_t servo[] = {0, 1, 2, 3, 4, 5};
 float servoMap[] = {0, 0, 0, 0, 0, 0};
+float servoMapR = 0;
 
 const byte address[6] = "00001";
 unsigned long lastReceiveTime = 0;
@@ -33,19 +35,21 @@ Data_Package data; //Create a variable with the above structure
 
 void resetData() {
   // Reset the values when there is no radio connection - Set initial default values
-  data.MPU0_y = 0;
-  data.MPU0_p = 0;
-  data.MPU0_r = 0;
-  data.MPU1_y = 0;
-  data.MPU1_p = 0;
-  data.MPU1_r = 0;
-  for (byte b = 0; b < 5; b++) {
-    servoMap[b] = 0;
+  // 127 because byte value is 0-255, so 127 is middle
+  data.MPU0_y = 127;
+  data.MPU0_p = 127;
+  data.MPU0_r = 127;
+  data.MPU1_y = 127;
+  data.MPU1_p = 127;
+  data.MPU1_r = 127;
+  for (byte b = 0; b < 6; b++) {
+    servoMapR = map(127, 255, 0, SERVOMIN, SERVOMAX);
+    pwm.writeMicroseconds(servo[b], servoMapR);
   }
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Beginning...");
 
   pwm.begin();
@@ -67,38 +71,35 @@ void loop() {
   if (radio.available()) {
     radio.read(&data, sizeof(Data_Package)); // Read the whole data and store it into the 'data' structure
     lastReceiveTime = millis(); // At this moment we have received the data
-    Serial.println("Available");
+    //    Serial.println("Available");
     Serial.print("MPU0_y: ");
     Serial.print(data.MPU0_y);
     Serial.print("; MPU0_p: ");
     Serial.print(data.MPU0_p);
     Serial.print("; MPU0_r: ");
-    Serial.println(data.MPU0_r);
+    Serial.print(data.MPU0_r);
     Serial.print("; MPU1_y: ");
-    Serial.println(data.MPU1_y);
+    Serial.print(data.MPU1_y);
     Serial.print("; MPU1_p: ");
     Serial.print(data.MPU1_p);
     Serial.print("; MPU1_r: ");
     Serial.print(data.MPU1_r);
     Serial.println("");
 
-    //    servoMap[0] = map(data.MPU0_y, 180, 0, SERVOMIN, SERVOMAX);
-    //    pwm.writeMicroseconds(servo[0], servoMap[0]);
-    //    servoMap[1] = map(data.MPU0_p, 180, 0, SERVOMIN, SERVOMAX);
-    //    pwm.writeMicroseconds(servo[1], servoMap[1]);
-    //    servoMap[2] = map(data.MPU0_r, 180, 0, SERVOMIN, SERVOMAX);
-    //    pwm.writeMicroseconds(servo[2], servoMap[2]);
+    //    servoMap[0] = map(data.MPU0_y, 255, 0, SERVOMIN, SERVOMAX);
+    //    servoMap[1] = map(data.MPU0_p, 255, 0, SERVOMIN, SERVOMAX);
+    //    servoMap[2] = map(data.MPU0_r, 255, 0, SERVOMIN, SERVOMAX);
     //
-    //    servoMap[3] = map(data.MPU1_y, 180, 0, SERVOMIN, SERVOMAX);
-    //    pwm.writeMicroseconds(servo[3], servoMap[3]);
-    //    servoMap[4] = map(data.MPU1_p, 180, 0, SERVOMIN, SERVOMAX);
-    //    pwm.writeMicroseconds(servo[4], servoMap[4]);
-    //    servoMap[5] = map(data.MPU1_r, 180, 0, SERVOMIN, SERVOMAX);
-    //    pwm.writeMicroseconds(servo[5], servoMap[5]);
+    //    servoMap[3] = map(data.MPU1_y, 255, 0, SERVOMIN, SERVOMAX);
+    //    servoMap[4] = map(data.MPU1_p, 255, 0, SERVOMIN, SERVOMAX);
+    //    servoMap[5] = map(data.MPU1_r, 255, 0, SERVOMIN, SERVOMAX);
+    //    for (byte b = 0; b < 6; b++) {
+    //      pwm.writeMicroseconds(servo[b], servoMap[b]);
+    //    }
   }
-  else {
-    Serial.println("Not available");
-  }
+  //  else {
+  //    Serial.println("Not available");
+  //  }
 
   // Check whether we keep receving data, or we have a connection between the two modules
   currentTime = millis();

@@ -33,7 +33,7 @@ float MPU_y[] = {0, 0};
 float MPU_p[] = {0, 0};
 float MPU_r[] = {0, 0};
 
-RF24 radio(32, 33);   // nRF24L01 (CE, CSN)
+RF24 radio(7, 8);   // nRF24L01 (CE, CSN)
 const byte address[6] = "00001"; // Address
 
 // Max size of this struct is 32 bytes - NRF24L01 buffer limit
@@ -166,12 +166,14 @@ void loop() {
     blinkState = !blinkState;
     digitalWrite(LED_PIN, blinkState);
   }
-  data.MPU0_y = MPU_y[0];
-  data.MPU0_p = MPU_p[0];
-  data.MPU0_r = MPU_r[0];
-  data.MPU1_y = MPU_y[1];
-  data.MPU1_p = MPU_p[1];
-  data.MPU1_r = MPU_r[1];
+
+  //Map the data from MPU to 0-255 range and then round it to be able to send in bytes, and set it to the data variables being sent
+  data.MPU0_y = round(map(MPU_y[0], -180, 180, 0, 255));
+  data.MPU0_p = round(map(MPU_p[0], -180, 180, 0, 255));
+  data.MPU0_r = round(map(MPU_r[0], -180, 180, 0, 255));
+  data.MPU1_y = round(map(MPU_y[1], -180, 180, 0, 255));
+  data.MPU1_p = round(map(MPU_p[1], -180, 180, 0, 255));
+  data.MPU1_r = round(map(MPU_r[1], -180, 180, 0, 255));
   // Send the whole data from the structure to the receiver
   radio.write(&data, sizeof(Data_Package));
 }
