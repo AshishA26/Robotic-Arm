@@ -86,16 +86,16 @@ void loop() {
     Serial.print(data.MPU1_r);
     Serial.println("");
 
-    //    servoMap[0] = map(data.MPU0_y, 255, 0, SERVOMIN, SERVOMAX);
-    //    servoMap[1] = map(data.MPU0_p, 255, 0, SERVOMIN, SERVOMAX);
-    //    servoMap[2] = map(data.MPU0_r, 255, 0, SERVOMIN, SERVOMAX);
-    //
-    //    servoMap[3] = map(data.MPU1_y, 255, 0, SERVOMIN, SERVOMAX);
-    //    servoMap[4] = map(data.MPU1_p, 255, 0, SERVOMIN, SERVOMAX);
-    //    servoMap[5] = map(data.MPU1_r, 255, 0, SERVOMIN, SERVOMAX);
-    //    for (byte b = 0; b < 6; b++) {
-    //      pwm.writeMicroseconds(servo[b], servoMap[b]);
-    //    }
+    servoMap[0] = map(data.MPU0_y, 255, 0, SERVOMIN, SERVOMAX);
+    servoMap[1] = map(data.MPU0_p, 255, 0, SERVOMIN, SERVOMAX);
+    servoMap[2] = map(data.MPU0_r, 255, 0, SERVOMIN, SERVOMAX);
+
+    servoMap[3] = map(data.MPU1_y, 255, 0, SERVOMIN, SERVOMAX);
+    servoMap[4] = map(data.MPU1_p, 255, 0, SERVOMIN, SERVOMAX);
+    servoMap[5] = map(data.MPU1_r, 255, 0, SERVOMIN, SERVOMAX);
+    for (byte b = 0; b < 6; b++) {
+      pwm.writeMicroseconds(servo[b], servoMap[b]);
+    }
   }
   //  else {
   //    Serial.println("Not available");
