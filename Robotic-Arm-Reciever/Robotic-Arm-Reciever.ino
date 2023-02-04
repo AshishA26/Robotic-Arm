@@ -17,6 +17,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 // our servo # counter
 uint8_t servo[] = {0, 1, 2, 3, 4, 5};
 float servoMap[] = {0, 0, 0, 0, 0, 0};
+float servoPos[] = {127, 127, 127, 127, 127, 127};
 float servoMapR = 0;
 
 const byte address[6] = "00001";
@@ -45,6 +46,7 @@ void resetData() {
   for (byte b = 0; b < 6; b++) {
     servoMapR = map(127, 255, 0, SERVOMIN, SERVOMAX);
     pwm.writeMicroseconds(servo[b], servoMapR);
+    servoPos[b] = 127;
   }
 }
 
@@ -65,6 +67,8 @@ void setup() {
   resetData();
 }
 
+int i = 127;
+
 void loop() {
 
   // Check whether there is data to be received
@@ -84,32 +88,98 @@ void loop() {
     Serial.print(data.MPU1_p);
     Serial.print("; MPU1_r: ");
     Serial.print(data.MPU1_r);
+    Serial.print("; ServoPos[4]: ");
+    Serial.print(servoPos[4]);
     Serial.println("");
 
     // Map byte value to servo range, for each servo. Servos are numbered from bottom to top.
-    servoMap[0] = map(data.MPU0_y, 255, 0, SERVOMIN, SERVOMAX); // Base
-    servoMap[1] = map(data.MPU0_p, 255, 0, SERVOMIN, SERVOMAX); // Elbow bottom
-    servoMap[2] = map(data.MPU1_p, 255, 0, SERVOMIN, SERVOMAX); // Elbow top
-    servoMap[3] = map(data.MPU1_r, 255, 0, SERVOMIN, SERVOMAX); // Wrist
-    servoMap[4] = map(data.MPU0_r, 255, 0, SERVOMIN, SERVOMAX); // Claw
+    //    servoMap[0] = map(data.MPU0_y, 255, 0, SERVOMIN, SERVOMAX); // Base
+    //    servoMap[1] = map(data.MPU0_p, 255, 0, SERVOMIN, SERVOMAX); // Shoulder
+    //    servoMap[2] = map(data.MPU1_p, 255, 0, SERVOMIN, SERVOMAX); // Elbow
+    //    servoMap[3] = map(data.MPU1_r, 255, 0, SERVOMIN, SERVOMAX); // Wrist
+    //    servoMap[4] = map(data.MPU0_r, 255, 0, SERVOMIN, SERVOMAX); // Claw
     // Note: There is only 5 servos, so MPU1_y isn't in use.
 
-    // Limit the movement each of the servos movement so they doesn't hit any other part
-    if (data.MPU0_y > 50 and data.MPU0_y < 205) {
-      pwm.writeMicroseconds(servo[0], servoMap[0]);
+    // Base
+    if (data.MPU0_y > 132 and servoPos[0] < 205) {
+      servoPos[0] = servoPos[0] + 1;
+      servoMap[0] = map(servoPos[0], 255, 0, SERVOMIN, SERVOMAX);
+      delay(15);
     }
-    if (data.MPU0_p > 50 and data.MPU0_p < 205) {
-      pwm.writeMicroseconds(servo[1], servoMap[1]);
+    if (data.MPU0_y < 122 and servoPos[0] > 50) {
+      servoPos[0] = servoPos[0] - 1;
+      servoMap[0] = map(servoPos[0], 255, 0, SERVOMIN, SERVOMAX);
+      delay(15);
     }
-    if (data.MPU1_p > 50 and data.MPU1_p < 205) {
-      pwm.writeMicroseconds(servo[2], servoMap[2]);
+
+    // Shoulder
+    if (data.MPU0_p > 132 and servoPos[1] < 205) {
+      servoPos[1] = servoPos[1] + 1;
+      servoMap[1] = map(servoPos[1], 255, 0, SERVOMIN, SERVOMAX);
+      delay(15);
     }
-    if (data.MPU1_r > 0 and data.MPU1_r < 255) {
-      pwm.writeMicroseconds(servo[3], servoMap[3]);
+    if (data.MPU0_p < 122 and servoPos[1] > 50) {
+      servoPos[1] = servoPos[1] - 1;
+      servoMap[1] = map(servoPos[1], 255, 0, SERVOMIN, SERVOMAX);
+      delay(15);
     }
-    if (data.MPU0_r > 111 and data.MPU0_r < 171) {
-      pwm.writeMicroseconds(servo[4], servoMap[4]);
+
+    // Elbow
+    if (data.MPU1_p > 132 and servoPos[2] < 205) {
+      servoPos[2] = servoPos[2] + 1;
+      servoMap[2] = map(servoPos[2], 255, 0, SERVOMIN, SERVOMAX);
+      delay(15);
     }
+    if (data.MPU1_p < 122 and servoPos[2] > 50) {
+      servoPos[2] = servoPos[2] - 1;
+      servoMap[2] = map(servoPos[2], 255, 0, SERVOMIN, SERVOMAX);
+      delay(15);
+    }
+
+    // Wrist
+    if (data.MPU1_r > 132 and servoPos[3] < 255) {
+      servoPos[3] = servoPos[3] + 1;
+      servoMap[3] = map(servoPos[3], 255, 0, SERVOMIN, SERVOMAX);
+      delay(15);
+    }
+    if (data.MPU1_r < 122 and servoPos[3] > 0) {
+      servoPos[3] = servoPos[3] - 1;
+      servoMap[3] = map(servoPos[3], 255, 0, SERVOMIN, SERVOMAX);
+      delay(15);
+    }
+
+    // Claw
+    if (data.MPU0_r > 132 and servoPos[4] < 171) {
+      servoPos[4] = servoPos[4] + 1;
+      servoMap[4] = map(servoPos[4], 255, 0, SERVOMIN, SERVOMAX);
+      delay(15);
+    }
+    if (data.MPU0_r < 122 and servoPos[4] > 111) {
+      servoPos[4] = servoPos[4] - 1;
+      servoMap[4] = map(servoPos[4], 255, 0, SERVOMIN, SERVOMAX);
+      delay(15);
+    }
+
+    for (byte b = 0; b < 6; b++) {
+      pwm.writeMicroseconds(servo[b], servoMap[b]);
+    }
+
+    //    // Limit the movement each of the servos movement so they doesn't hit any other part
+    //    if (data.MPU0_y > 50 and data.MPU0_y < 205) {
+    //      pwm.writeMicroseconds(servo[0], servoMap[0]);
+    //    }
+    //    if (data.MPU0_p > 50 and data.MPU0_p < 205) {
+    //      pwm.writeMicroseconds(servo[1], servoMap[1]);
+    //    }
+    //    if (data.MPU1_p > 50 and data.MPU1_p < 205) {
+    //      pwm.writeMicroseconds(servo[2], servoMap[2]);
+    //    }
+    //    if (data.MPU1_r > 0 and data.MPU1_r < 255) {
+    //      pwm.writeMicroseconds(servo[3], servoMap[3]);
+    //    }
+    //    if (data.MPU0_r > 111 and data.MPU0_r < 171) {
+    //      pwm.writeMicroseconds(servo[4], servoMap[4]);
+    //    }
   }
 
   // Check whether we keep receving data, or we have a connection between the two modules
