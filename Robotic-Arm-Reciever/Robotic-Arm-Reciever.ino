@@ -86,20 +86,31 @@ void loop() {
     Serial.print(data.MPU1_r);
     Serial.println("");
 
-    servoMap[0] = map(data.MPU0_y, 255, 0, SERVOMIN, SERVOMAX);
-    servoMap[1] = map(data.MPU0_p, 255, 0, SERVOMIN, SERVOMAX);
-    servoMap[2] = map(data.MPU0_r, 255, 0, SERVOMIN, SERVOMAX);
+    // Map byte value to servo range, for each servo. Servos are numbered from bottom to top.
+    servoMap[0] = map(data.MPU0_y, 255, 0, SERVOMIN, SERVOMAX); // Base
+    servoMap[1] = map(data.MPU0_p, 255, 0, SERVOMIN, SERVOMAX); // Elbow bottom
+    servoMap[2] = map(data.MPU1_p, 255, 0, SERVOMIN, SERVOMAX); // Elbow top
+    servoMap[3] = map(data.MPU1_r, 255, 0, SERVOMIN, SERVOMAX); // Wrist
+    servoMap[4] = map(data.MPU0_r, 255, 0, SERVOMIN, SERVOMAX); // Claw
+    // Note: There is only 5 servos, so MPU1_y isn't in use.
 
-    servoMap[3] = map(data.MPU1_y, 255, 0, SERVOMIN, SERVOMAX);
-    servoMap[4] = map(data.MPU1_p, 255, 0, SERVOMIN, SERVOMAX);
-    servoMap[5] = map(data.MPU1_r, 255, 0, SERVOMIN, SERVOMAX);
-    for (byte b = 0; b < 6; b++) {
-      pwm.writeMicroseconds(servo[b], servoMap[b]);
+    // Limit the movement each of the servos movement so they doesn't hit any other part
+    if (data.MPU0_y > 50 and data.MPU0_y < 205) {
+      pwm.writeMicroseconds(servo[0], servoMap[0]);
+    }
+    if (data.MPU0_p > 50 and data.MPU0_p < 205) {
+      pwm.writeMicroseconds(servo[1], servoMap[1]);
+    }
+    if (data.MPU1_p > 50 and data.MPU1_p < 205) {
+      pwm.writeMicroseconds(servo[2], servoMap[2]);
+    }
+    if (data.MPU1_r > 0 and data.MPU1_r < 255) {
+      pwm.writeMicroseconds(servo[3], servoMap[3]);
+    }
+    if (data.MPU0_r > 111 and data.MPU0_r < 171) {
+      pwm.writeMicroseconds(servo[4], servoMap[4]);
     }
   }
-  //  else {
-  //    Serial.println("Not available");
-  //  }
 
   // Check whether we keep receving data, or we have a connection between the two modules
   currentTime = millis();
