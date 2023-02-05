@@ -1,4 +1,3 @@
-
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <SPI.h>
@@ -19,6 +18,12 @@ uint8_t servo[] = {0, 1, 2, 3, 4, 5};
 float servoMap[] = {0, 0, 0, 0, 0, 0};
 float servoPos[] = {127, 127, 127, 127, 127, 127};
 float servoMapR = 0;
+
+#define MPUBeginHigh  137
+#define MPUBeginLow  117
+#define MPUCheckHigh  134
+#define MPUCheckLow  120
+#define delayTime  20
 
 const byte address[6] = "00001";
 unsigned long lastReceiveTime = 0;
@@ -67,7 +72,54 @@ void setup() {
   resetData();
 }
 
-int i = 127;
+/*
+ * Function to check if other axis' are centered (or close to their center positions) as 2 axis' should not be moving at the same time. 
+ * 2 axis motion at the same time has been stopped because, for example, if the MPU had a yaw of 0 and a roll of 0, and then the yaw 
+ * was moved to say 65, then the roll would for no reason change to something like 180. This is most likely due to the programmed 
+ * mathematics in the MPU itself. So this is just to prevent any weird motion.
+*/
+int checkOtherAxis(int axisNumber) {
+  if (axisNumber == 0) {
+    if (data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow or data.MPU1_p > MPUCheckHigh or data.MPU1_p < MPUCheckLow or data.MPU1_r > MPUCheckHigh or data.MPU1_r < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y) {
+      return 0;
+    }
+    else {
+      return 1;
+    }
+  }
+  else if (axisNumber == 1) {
+    if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU1_p > MPUCheckHigh or data.MPU1_p < MPUCheckLow or data.MPU1_r > MPUCheckHigh or data.MPU1_r < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y) {
+      return 0;
+    }
+    else {
+      return 1;
+    }
+  }
+  else if (axisNumber == 2) {
+    if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow or data.MPU1_r > MPUCheckHigh or data.MPU1_r < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y) {
+      return 0;
+    }
+    else {
+      return 1;
+    }
+  }
+  else if (axisNumber == 3) {
+    if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow or data.MPU1_p > MPUCheckHigh or data.MPU1_p < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y) {
+      return 0;
+    }
+    else {
+      return 1;
+    }
+  }
+  else if (axisNumber == 4) {
+    if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow or data.MPU1_p > MPUCheckHigh or data.MPU1_p < MPUCheckLow or data.MPU1_r > MPUCheckHigh or data.MPU1_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y) {
+      return 0;
+    }
+    else {
+      return 1;
+    }
+  }
+}
 
 void loop() {
 
@@ -88,103 +140,81 @@ void loop() {
     Serial.print(data.MPU1_p);
     Serial.print("; MPU1_r: ");
     Serial.print(data.MPU1_r);
-    Serial.print("; ServoPos[4]: ");
-    Serial.print(servoPos[4]);
     Serial.println("");
 
-    // Map byte value to servo range, for each servo. Servos are numbered from bottom to top.
-    //    servoMap[0] = map(data.MPU0_y, 255, 0, SERVOMIN, SERVOMAX); // Base
-    //    servoMap[1] = map(data.MPU0_p, 255, 0, SERVOMIN, SERVOMAX); // Shoulder
-    //    servoMap[2] = map(data.MPU1_p, 255, 0, SERVOMIN, SERVOMAX); // Elbow
-    //    servoMap[3] = map(data.MPU1_r, 255, 0, SERVOMIN, SERVOMAX); // Wrist
-    //    servoMap[4] = map(data.MPU0_r, 255, 0, SERVOMIN, SERVOMAX); // Claw
-    // Note: There is only 5 servos, so MPU1_y isn't in use.
-
+    // Note: Servos are numbered from bottom to top. Also, there is only 5 servos, so I have decided to not use the axis MPU1_y.
+    // Below if statements are to limit servo motion to prevent parts from hitting each other. Also checks whether MPU has been tilted above or below a certain number, and checks if other axises are (almost) centered.
+    
     // Base
-    if (data.MPU0_y > 132 and servoPos[0] < 205) {
+    if (data.MPU0_y > MPUBeginHigh and servoPos[0] < 205 and checkOtherAxis(0) == 1) {
       servoPos[0] = servoPos[0] + 1;
       servoMap[0] = map(servoPos[0], 255, 0, SERVOMIN, SERVOMAX);
-      delay(15);
+      delay(delayTime);
     }
-    if (data.MPU0_y < 122 and servoPos[0] > 50) {
+    else if (data.MPU0_y < MPUBeginLow and servoPos[0] > 50 and checkOtherAxis(0) == 1) {
       servoPos[0] = servoPos[0] - 1;
       servoMap[0] = map(servoPos[0], 255, 0, SERVOMIN, SERVOMAX);
-      delay(15);
+      delay(delayTime);
     }
 
     // Shoulder
-    if (data.MPU0_p > 132 and servoPos[1] < 205) {
+    else if (data.MPU0_p > MPUBeginHigh and servoPos[1] < 205 and checkOtherAxis(1) == 1) {
       servoPos[1] = servoPos[1] + 1;
       servoMap[1] = map(servoPos[1], 255, 0, SERVOMIN, SERVOMAX);
-      delay(15);
+      delay(delayTime);
     }
-    if (data.MPU0_p < 122 and servoPos[1] > 50) {
+    else if (data.MPU0_p < MPUBeginLow and servoPos[1] > 50 and checkOtherAxis(1) == 1) {
       servoPos[1] = servoPos[1] - 1;
       servoMap[1] = map(servoPos[1], 255, 0, SERVOMIN, SERVOMAX);
-      delay(15);
+      delay(delayTime);
     }
 
     // Elbow
-    if (data.MPU1_p > 132 and servoPos[2] < 205) {
+    else if (data.MPU1_p > MPUBeginHigh and servoPos[2] < 205 and checkOtherAxis(2) == 1) {
       servoPos[2] = servoPos[2] + 1;
       servoMap[2] = map(servoPos[2], 255, 0, SERVOMIN, SERVOMAX);
-      delay(15);
+      delay(delayTime);
     }
-    if (data.MPU1_p < 122 and servoPos[2] > 50) {
+    else if (data.MPU1_p < MPUBeginLow and servoPos[2] > 50 and checkOtherAxis(2) == 1) {
       servoPos[2] = servoPos[2] - 1;
       servoMap[2] = map(servoPos[2], 255, 0, SERVOMIN, SERVOMAX);
-      delay(15);
+      delay(delayTime);
     }
 
     // Wrist
-    if (data.MPU1_r > 132 and servoPos[3] < 255) {
+    else if (data.MPU1_r > MPUBeginHigh and servoPos[3] < 255 and checkOtherAxis(3) == 1) {
       servoPos[3] = servoPos[3] + 1;
       servoMap[3] = map(servoPos[3], 255, 0, SERVOMIN, SERVOMAX);
-      delay(15);
+      delay(delayTime);
     }
-    if (data.MPU1_r < 122 and servoPos[3] > 0) {
+    else if (data.MPU1_r < MPUBeginLow and servoPos[3] > 0 and checkOtherAxis(3) == 1) {
       servoPos[3] = servoPos[3] - 1;
       servoMap[3] = map(servoPos[3], 255, 0, SERVOMIN, SERVOMAX);
-      delay(15);
+      delay(delayTime);
     }
 
     // Claw
-    if (data.MPU0_r > 132 and servoPos[4] < 171) {
+    else if (data.MPU0_r > MPUBeginHigh and servoPos[4] < 171 and checkOtherAxis(4) == 1) {
       servoPos[4] = servoPos[4] + 1;
       servoMap[4] = map(servoPos[4], 255, 0, SERVOMIN, SERVOMAX);
-      delay(15);
+      delay(delayTime);
     }
-    if (data.MPU0_r < 122 and servoPos[4] > 111) {
+    else if (data.MPU0_r < MPUBeginLow and servoPos[4] > 111 and checkOtherAxis(4) == 1) {
       servoPos[4] = servoPos[4] - 1;
       servoMap[4] = map(servoPos[4], 255, 0, SERVOMIN, SERVOMAX);
-      delay(15);
+      delay(delayTime);
     }
 
+    // Writes values to each servo
     for (byte b = 0; b < 6; b++) {
       pwm.writeMicroseconds(servo[b], servoMap[b]);
     }
-
-    //    // Limit the movement each of the servos movement so they doesn't hit any other part
-    //    if (data.MPU0_y > 50 and data.MPU0_y < 205) {
-    //      pwm.writeMicroseconds(servo[0], servoMap[0]);
-    //    }
-    //    if (data.MPU0_p > 50 and data.MPU0_p < 205) {
-    //      pwm.writeMicroseconds(servo[1], servoMap[1]);
-    //    }
-    //    if (data.MPU1_p > 50 and data.MPU1_p < 205) {
-    //      pwm.writeMicroseconds(servo[2], servoMap[2]);
-    //    }
-    //    if (data.MPU1_r > 0 and data.MPU1_r < 255) {
-    //      pwm.writeMicroseconds(servo[3], servoMap[3]);
-    //    }
-    //    if (data.MPU0_r > 111 and data.MPU0_r < 171) {
-    //      pwm.writeMicroseconds(servo[4], servoMap[4]);
-    //    }
   }
 
   // Check whether we keep receving data, or we have a connection between the two modules
   currentTime = millis();
   if ( currentTime - lastReceiveTime > 1000 ) { // If current time is more then 1 second since we have recived the last data, that means we have lost connection
-    resetData(); // If connection is lost, reset the data. It prevents unwanted behavior, for example if a drone has a throttle up and we lose connection, it can keep flying unless we reset the values
+    //resetData(); // This is commented out because if the nRF does disconnect, we don't want the arm to fling into its default position, we want to to stay in its previous position.
+    Serial.println("nRF DISCONNECTED");
   }
 }
