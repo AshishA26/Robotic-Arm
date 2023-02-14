@@ -1,12 +1,13 @@
 # Robotic-Arm
-A robotic arm purposed to help people with disabilities and can work as a prototype for other use cases.
+A robotic arm purposed to help people with disabilities and meant for remote operations. Can also be used as a prototype in various other cases.
 
-There are 2 parts to this project. The 1st part is the robotic arm itself, which has 5 DOF (5 servos) and uses an Arduino Nano, a Dedicated Servo Driver, and an NRF24L01 for recieving signals. The 2nd part is the part that straps onto the user's body, and has an Arduino Nano, an NRF24L01 module, and 2 MPU6050's. The MPU6050s are velcroed onto the user's wrists, and then each direction of motion the user moves an arm in, causes a servo to move.
+There are 2 parts to this project. The 1st part is the robotic arm itself, which has 5 DOF (5 servos) and uses an Arduino Nano, a Dedicated Servo Driver, and an NRF24L01 for recieving signals. The 2nd part is the part that straps onto the user's body, and has an Arduino Nano, an NRF24L01 module for transmitting data to the robotic arm, and 2 MPU6050's. The MPU6050s are velcroed onto the user's wrists, and then each direction of motion the user moves an arm in, causes a servo to move.
 
 Programmed in Arduino IDE, models created in Solidworks, schematics created in KiCad.
 
 ![RobotArmPic5](./Images/RobotArmPic5.jpg)
-- Video Demo coming soon!
+
+- More updates to come!
 
 ## Demos
 Some demos showing how certain mechanisms in the robotic arm work.
