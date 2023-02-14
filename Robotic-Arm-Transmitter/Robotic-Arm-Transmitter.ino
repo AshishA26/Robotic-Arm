@@ -1,3 +1,5 @@
+// By Ashish Agrahari: https://github.com/AshishA26
+
 // I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
 // for both classes must be in the include path of your project
 #include "I2Cdev.h"

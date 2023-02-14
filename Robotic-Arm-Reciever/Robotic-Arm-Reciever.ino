@@ -1,3 +1,5 @@
+// By Ashish Agrahari: https://github.com/AshishA26
+
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <SPI.h>
