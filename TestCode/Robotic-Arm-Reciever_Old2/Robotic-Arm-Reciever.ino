@@ -82,7 +82,7 @@ void setup() {
 */
 int checkOtherAxis(int axisNumber) {
   if (axisNumber == 0) {
-    if (data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow) {
+    if (data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow or data.MPU1_p > MPUCheckHigh or data.MPU1_p < MPUCheckLow or data.MPU1_r > MPUCheckHigh or data.MPU1_r < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y < MPUCheckLow) {
       return 0;
     }
     else {
@@ -90,7 +90,7 @@ int checkOtherAxis(int axisNumber) {
     }
   }
   else if (axisNumber == 1) {
-    if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow) {
+    if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU1_p > MPUCheckHigh or data.MPU1_p < MPUCheckLow or data.MPU1_r > MPUCheckHigh or data.MPU1_r < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y < MPUCheckLow) {
       return 0;
     }
     else {
@@ -98,7 +98,7 @@ int checkOtherAxis(int axisNumber) {
     }
   }
   else if (axisNumber == 2) {
-    if (data.MPU1_r > MPUCheckHigh or data.MPU1_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y < MPUCheckLow) {
+    if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow or data.MPU1_r > MPUCheckHigh or data.MPU1_r < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y < MPUCheckLow) {
       return 0;
     }
     else {
@@ -106,7 +106,7 @@ int checkOtherAxis(int axisNumber) {
     }
   }
   else if (axisNumber == 3) {
-    if (data.MPU1_p > MPUCheckHigh or data.MPU1_p < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y < MPUCheckLow) {
+    if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow or data.MPU1_p > MPUCheckHigh or data.MPU1_p < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y < MPUCheckLow) {
       return 0;
     }
     else {
@@ -114,7 +114,7 @@ int checkOtherAxis(int axisNumber) {
     }
   }
   else if (axisNumber == 4) {
-    if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow) {
+    if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow or data.MPU1_p > MPUCheckHigh or data.MPU1_p < MPUCheckLow or data.MPU1_r > MPUCheckHigh or data.MPU1_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y < MPUCheckLow) {
       return 0;
     }
     else {
@@ -148,12 +148,12 @@ void loop() {
     // Below if statements are to limit servo motion to prevent parts from hitting each other. Also checks whether MPU has been tilted above or below a certain number, and checks if other axises are (almost) centered.
     
     // Base
-    if (data.MPU0_y > MPUBeginHigh and servoPos[0] < 255 and checkOtherAxis(0) == 1) {
+    if (data.MPU0_y > MPUBeginHigh and servoPos[0] < 205 and checkOtherAxis(0) == 1) {
       servoPos[0] = servoPos[0] + 1;
       servoMap[0] = map(servoPos[0], 255, 0, SERVOMIN, SERVOMAX);
       delay(delayTime);
     }
-    else if (data.MPU0_y < MPUBeginLow and servoPos[0] > 0 and checkOtherAxis(0) == 1) {
+    else if (data.MPU0_y < MPUBeginLow and servoPos[0] > 50 and checkOtherAxis(0) == 1) {
       servoPos[0] = servoPos[0] - 1;
       servoMap[0] = map(servoPos[0], 255, 0, SERVOMIN, SERVOMAX);
       delay(delayTime);
