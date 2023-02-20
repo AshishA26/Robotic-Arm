@@ -152,14 +152,14 @@ void loop() {
       mpu[b].dmpGetQuaternion(&q, fifoBuffer);
       mpu[b].dmpGetGravity(&gravity, &q);
       mpu[b].dmpGetYawPitchRoll(ypr, &q, &gravity);
-      Serial.print("mpu#");
-      Serial.print(b);
-      Serial.print("\t");
-      Serial.print(ypr[0] * 180 / M_PI);
-      Serial.print("\t");
-      Serial.print(ypr[1] * 180 / M_PI);
-      Serial.print("\t");
-      Serial.println(ypr[2] * 180 / M_PI);
+      //      Serial.print("mpu#");
+      //      Serial.print(b);
+      //      Serial.print("\t");
+      //      Serial.print(ypr[0] * 180 / M_PI);
+      //      Serial.print("\t");
+      //      Serial.print(ypr[1] * 180 / M_PI);
+      //      Serial.print("\t");
+      //      Serial.println(ypr[2] * 180 / M_PI);
 
       MPU_y[b] = ypr[0] * 180 / M_PI;
       MPU_p[b] = ypr[1] * 180 / M_PI;
@@ -177,6 +177,21 @@ void loop() {
   data.MPU1_y = round(map(MPU_y[1], -180, 180, 0, 255));
   data.MPU1_p = round(map(MPU_p[1], -180, 180, 0, 255));
   data.MPU1_r = round(map(MPU_r[1], -180, 180, 0, 255));
+
+  Serial.print("MPU0_y: ");
+  Serial.print(data.MPU0_y);
+  Serial.print("; MPU0_p: ");
+  Serial.print(data.MPU0_p);
+  Serial.print("; MPU0_r: ");
+  Serial.print(data.MPU0_r);
+  Serial.print("; MPU1_y: ");
+  Serial.print(data.MPU1_y);
+  Serial.print("; MPU1_p: ");
+  Serial.print(data.MPU1_p);
+  Serial.print("; MPU1_r: ");
+  Serial.print(data.MPU1_r);
+  Serial.println("");
+
   // Send the whole data from the structure to the receiver
   radio.write(&data, sizeof(Data_Package));
 }

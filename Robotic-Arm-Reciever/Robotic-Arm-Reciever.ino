@@ -89,7 +89,7 @@ int checkOtherAxis(int axisNumber) {
       return 1;
     }
   }
-  else if (axisNumber == 1) {
+  else if (axisNumber == 4) {
     if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU0_r > MPUCheckHigh or data.MPU0_r < MPUCheckLow) {
       return 0;
     }
@@ -97,7 +97,7 @@ int checkOtherAxis(int axisNumber) {
       return 1;
     }
   }
-  else if (axisNumber == 2) {
+  else if (axisNumber == 3) {
     if (data.MPU1_r > MPUCheckHigh or data.MPU1_r < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y < MPUCheckLow) {
       return 0;
     }
@@ -105,7 +105,7 @@ int checkOtherAxis(int axisNumber) {
       return 1;
     }
   }
-  else if (axisNumber == 3) {
+  else if (axisNumber == 2) {
     if (data.MPU1_p > MPUCheckHigh or data.MPU1_p < MPUCheckLow or data.MPU1_y > MPUCheckHigh or data.MPU1_y < MPUCheckLow) {
       return 0;
     }
@@ -113,7 +113,7 @@ int checkOtherAxis(int axisNumber) {
       return 1;
     }
   }
-  else if (axisNumber == 4) {
+  else if (axisNumber == 1) {
     if (data.MPU0_y > MPUCheckHigh or data.MPU0_y < MPUCheckLow or data.MPU0_p > MPUCheckHigh or data.MPU0_p < MPUCheckLow) {
       return 0;
     }
@@ -160,48 +160,48 @@ void loop() {
     }
 
     // Shoulder
-    else if (data.MPU0_p > MPUBeginHigh and servoPos[1] < 205 and checkOtherAxis(1) == 1) {
+    else if (data.MPU0_r > MPUBeginHigh and servoPos[1] < 205 and checkOtherAxis(1) == 1) {
       servoPos[1] = servoPos[1] + 1;
       servoMap[1] = map(servoPos[1], 255, 0, SERVOMIN, SERVOMAX);
       delay(delayTime);
     }
-    else if (data.MPU0_p < MPUBeginLow and servoPos[1] > 50 and checkOtherAxis(1) == 1) {
+    else if (data.MPU0_r < MPUBeginLow and servoPos[1] > 50 and checkOtherAxis(1) == 1) {
       servoPos[1] = servoPos[1] - 1;
       servoMap[1] = map(servoPos[1], 255, 0, SERVOMIN, SERVOMAX);
       delay(delayTime);
     }
 
     // Elbow
-    else if (data.MPU1_p > MPUBeginHigh and servoPos[2] < 205 and checkOtherAxis(2) == 1) {
+    else if (data.MPU1_r > MPUBeginHigh and servoPos[2] < 205 and checkOtherAxis(2) == 1) {
       servoPos[2] = servoPos[2] + 1;
       servoMap[2] = map(servoPos[2], 255, 0, SERVOMIN, SERVOMAX);
       delay(delayTime);
     }
-    else if (data.MPU1_p < MPUBeginLow and servoPos[2] > 50 and checkOtherAxis(2) == 1) {
+    else if (data.MPU1_r < MPUBeginLow and servoPos[2] > 50 and checkOtherAxis(2) == 1) {
       servoPos[2] = servoPos[2] - 1;
       servoMap[2] = map(servoPos[2], 255, 0, SERVOMIN, SERVOMAX);
       delay(delayTime);
     }
 
     // Wrist
-    else if (data.MPU1_r > MPUBeginHigh and servoPos[3] < 255 and checkOtherAxis(3) == 1) {
+    else if (data.MPU1_p > MPUBeginHigh and servoPos[3] < 255 and checkOtherAxis(3) == 1) {
       servoPos[3] = servoPos[3] + 1;
       servoMap[3] = map(servoPos[3], 255, 0, SERVOMIN, SERVOMAX);
       delay(delayTime);
     }
-    else if (data.MPU1_r < MPUBeginLow and servoPos[3] > 0 and checkOtherAxis(3) == 1) {
+    else if (data.MPU1_p < MPUBeginLow and servoPos[3] > 0 and checkOtherAxis(3) == 1) {
       servoPos[3] = servoPos[3] - 1;
       servoMap[3] = map(servoPos[3], 255, 0, SERVOMIN, SERVOMAX);
       delay(delayTime);
     }
 
     // Claw
-    else if (data.MPU0_r > MPUBeginHigh and servoPos[4] < 171 and checkOtherAxis(4) == 1) {
+    else if (data.MPU0_p > MPUBeginHigh and servoPos[4] < 171 and checkOtherAxis(4) == 1) {
       servoPos[4] = servoPos[4] + 1;
       servoMap[4] = map(servoPos[4], 255, 0, SERVOMIN, SERVOMAX);
       delay(delayTime);
     }
-    else if (data.MPU0_r < MPUBeginLow and servoPos[4] > 111 and checkOtherAxis(4) == 1) {
+    else if (data.MPU0_p < MPUBeginLow and servoPos[4] > 111 and checkOtherAxis(4) == 1) {
       servoPos[4] = servoPos[4] - 1;
       servoMap[4] = map(servoPos[4], 255, 0, SERVOMIN, SERVOMAX);
       delay(delayTime);
