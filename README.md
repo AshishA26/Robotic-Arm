@@ -25,7 +25,7 @@ Some demos showing how certain mechanisms in the robotic arm work.
 </p>
 
 ## Schematics
-- Coming soon!
+![RobotArmSchematic](./Images/RoboticArmSchematic/RoboticArmSchematic.svg)
 
 ## Other Pictures
 ![RobotArmPic6](./Images/RobotArmPic6.jpg)
