@@ -3,7 +3,7 @@ A robotic arm that mimics a user's arm gestures. It is purposed to help people w
 
 There are 2 parts to this project. The 1st part is the robotic arm itself, which has 5 DOF (5 servos) and uses an Arduino Nano, a Dedicated Servo Driver, and an NRF24L01 for recieving signals. The 2nd part is a gesture controller that straps onto the user's body. It has an Arduino Nano, an NRF24L01 module for transmitting data to the robotic arm, and 2 MPU6050's. The MPU6050s are velcroed onto the user's wrists, and then each direction of motion the user moves an arm in, causes a servo to move.
 
-Programmed in Arduino IDE, models created in Solidworks, schematics created in KiCad.
+Programmed in `Arduino IDE`, models created in `Solidworks`, schematics created in `KiCad`.
 
 Robotic Arm:
 ![RobotArmPic5](./Images/RobotArmPic0.jpg)
