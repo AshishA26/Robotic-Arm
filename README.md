@@ -31,7 +31,7 @@ Some demos showing how certain mechanisms in the robotic arm work.
   <img src="./Images/ClawDemo.gif"/>
 </p>
 
-## Other Pictures
+## Other Images
 Rendered pictures of the 3D model I created using my own models designed for 3D printing combined with the servos from [GrabCAD](https://grabcad.com/library). Made in real-world scale and was designed using Solidworks:
 ![RobotArmPic5](./Images/RobotArmPic8.JPG)
 
