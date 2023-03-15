@@ -5,10 +5,10 @@ There are 2 parts to this project. The 1st part is the robotic arm itself, which
 
 Programmed in `Arduino IDE`, models created in `Solidworks`, schematics created in `KiCad`.
 
-Here is a very quick demo of the robotic arm being manipulated by the gesture controller that is strapped onto me. The full video is available [here](https://www.youtube.com/watch?v=RmKj0so72yQ).
+Here is a very quick demo of the robotic arm being manipulated by the gesture controller that is strapped onto me. The full video is available [here](https://www.youtube.com/watch?v=RmKj0so72yQ). (Note: The white object in my hand is a switch to remotely power on/off the robotic arm.)
 [![Link to youtube video](./Images/RoboticArmGif.gif)](https://www.youtube.com/watch?v=RmKj0so72yQ)
 
-Additionally, I made a demo video showing all the joints in the robotic arm moving one by one (using the gesture controller), which is available for viewing [here](https://www.youtube.com/watch?v=wtbUKPRAr4o).
+Additionally, I made a demo video showing all the joints in the robotic arm moving one by one (using the gesture controller), which is available for viewing [here](https://www.youtube.com/watch?v=eJz9jL7be58).
 
 A picture of the Robotic Arm:
 ![RobotArmPic5](./Images/RobotArmPic0.jpg)
